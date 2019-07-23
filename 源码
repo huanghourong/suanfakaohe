@@ -1,0 +1,60 @@
+#include<stdio.h>
+int number,capacity,bestp,volume;//分别为：存在的物品的个数，背包的容量，最大价值,背包的体积容量
+int p[10000],w[10000],v[10000],x[10000],bestx[10000];//分别代表：物品的价值，物品的重量，x[i]暂存物品的选中情况,物品的选中情况，物品体积
+
+void Backtrack(int i,int cw,int cp,int cv)
+{ //cw代表当前包内物品重量，cp代表当前包内物品价值，cv代表当前物品体积
+    int j;
+    if(i>number)//回溯结束
+    {
+        if(cp>bestp)//如果当前价值＞最优价值
+        {
+            bestp=cp;//那么有 最优价值=当前价值
+            for(i=0;i<=number;i++) bestx[i]=x[i];//判断第i个最优装载是否装入
+        }
+    }
+    else 
+        for(j=0;j<=1;j++)  //第i个最优装载不装入
+        {
+            x[i]=j;
+                if(cw+x[i]*w[i]<=capacity&&cv+x[i]*v[i]<=volume)  //如果当前背包内物品总重＋第i个物品重量<=背包容量
+                {
+                    cw+=w[i]*x[i];//当前总重=当前总重＋第i个物品重量
+					cv+=v[i]*x[i];//当前体积=当前体积＋第i个物品体积
+                    cp+=p[i]*x[i];//当前总价值=当前总价值＋第i个物品价值
+                    Backtrack(i+1,cp,cw,cv);
+                    cw-=w[i]*x[i];//当前总重=当前总重-第i个物品重量
+                    cp-=p[i]*x[i];//当前总价=当前总价-第i个物品价值 
+					
+            }
+        }
+}
+
+int main()
+{
+    int i;
+    bestp=0; 
+    printf("请输入背包最大容量:\n");
+    scanf("%d",&capacity);
+	printf("请输入背包最大体积:\n");
+    scanf("%d",&volume);
+    printf("请输入物品个数:\n");
+    scanf("%d",&number);
+    printf("请依次输入物品的重量:\n");
+    for(i=1;i<=number;i++) 
+        scanf("%d",&w[i]);
+	 printf("请依次输入物品的体积:\n");
+    for(i=1;i<=number;i++) 
+        scanf("%d",&v[i]);
+    printf("请依次输入物品的价值:\n");
+    for(i=1;i<=number;i++) 
+        scanf("%d",&p[i]);
+    Backtrack(1,0,0,0);//当递归函数达到条件i=1时外层调用结束执行下一步
+    printf("最大价值为:\n");
+    printf("%d\n",bestp);
+    printf("被选中的物品依次是(0表示未选中，1表示选中)\n");
+    for(i=1;i<=number;i++) 
+        printf("%d ",bestx[i]);
+    printf("\n");
+    return 0;
+}
